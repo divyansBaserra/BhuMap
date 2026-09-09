@@ -45,11 +45,15 @@ Core packages include:
 
 ---
 
-## 2. Model Weights
-The server automatically resolves the trained YOLOv8 weights from:
-`runs/detect/training_runs/sih26012_aerial_model/weights/best.pt`
+## 2. Model Weights & Setup
+**IMPORTANT:** The AI model weights are too large for GitHub and are not included in the repository.
 
-If CUDA is available, it automatically loads onto `cuda:0` (NVIDIA GeForce RTX 2050). If not, it falls back gracefully to `cpu`.
+1. Download the `best.pt` file from our shared drive: `https://drive.google.com/drive/folders/1TMQFkfndDPQtUZQcHPFXHSbJNpykCCce?usp=sharing`
+2. Create the following folder structure inside the `backend` directory if it does not exist:
+   `runs/detect/training_runs/sih26012_aerial_model/weights/`
+3. Place the downloaded `best.pt` file inside that `weights/` folder.
+
+The server will automatically resolve the path. If CUDA is available, it automatically loads onto `cuda:0`. If not, it falls back gracefully to `cpu`.
 
 ---
 
