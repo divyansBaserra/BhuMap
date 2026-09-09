@@ -39,3 +39,26 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Python / Backend
+backend/venv/
+backend/__pycache__/
+*.pyc
+
+# Large model weights (Uncomment if you use Git LFS)
+*.pt
+*.pth
+*.onnx
+
+# YOLOv8 outputs and test inferences
+backend/runs/
+runs/
+
+# Massive GIS datasets and stitched maps
+*.rar
+*.zip
+*.tif
+*.tiff
+backend/inputs/
+backend/datasets/
+datasets/

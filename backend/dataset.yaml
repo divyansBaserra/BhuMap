@@ -1,0 +1,11 @@
+# dataset.yaml
+# Absolute or relative path to your dataset folder
+path: datasets/aerial_mapping 
+train: images/train
+val: images/val
+
+# Define the classes we need for SIH26012
+names:
+  0: building_footprint
+  1: land_parcel
+  2: road

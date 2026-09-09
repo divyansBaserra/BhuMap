@@ -1,0 +1,11 @@
+# Core FastAPI server dependencies
+fastapi>=0.115.0
+uvicorn>=0.30.0
+python-multipart>=0.0.9
+
+# AI & Deep Learning Inference
+ultralytics>=8.3.0
+sahi>=0.12.0
+torch>=2.5.0
+torchvision>=0.20.0
+pillow>=10.0.0
