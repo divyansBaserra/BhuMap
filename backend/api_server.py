@@ -1,4 +1,5 @@
 import io
+import os
 # pyrefly: ignore [missing-import]
 from fastapi import FastAPI, UploadFile, File, HTTPException
 # pyrefly: ignore [missing-import]
@@ -11,11 +12,12 @@ from PIL import Image
 import uvicorn
 
 from tiling_engine import predict_stitched
+from vectorize import convert_pixels_to_geojson
 
 app = FastAPI(
     title="BhuMap Cadastral API",
-    description="Aerial imagery building detection API supporting standard YOLOv8 inference and SAHI high-resolution tiling inference.",
-    version="1.1.0"
+    description="Aerial imagery building detection API supporting standard YOLOv8 inference, SAHI tiling, and GeoJSON geospatial vectorization.",
+    version="1.2.0"
 )
 
 # Enable CORS for frontend integration
@@ -84,6 +86,40 @@ async def detect_buildings_stitched(file: UploadFile = File(...)):
     # Execute SAHI sliced inference via the tiling engine
     result = predict_stitched(image)
     return result
+
+
+@app.post("/predict-geospatial", summary="SAHI detection + GeoTIFF to GeoJSON transformation")
+async def predict_geospatial(file: UploadFile = File(...)):
+    """
+    Accepts a georeferenced GeoTIFF (.tif) file, runs SAHI tiled inference, 
+    and converts pixel bounding boxes into true GPS/GeoJSON polygons.
+    """
+    temp_path = f"temp_{file.filename}"
+    try:
+        # Save upload temporarily so rasterio can read spatial headers
+        with open(temp_path, "wb") as buffer:
+            content = await file.read()
+            buffer.write(content)
+            
+        # Re-open as PIL Image for the SAHI tiling pipeline
+        image = Image.open(io.BytesIO(content)).convert("RGB")
+        
+        # 1. Run SAHI/YOLO prediction
+        sahi_result = predict_stitched(image)
+        
+        # Extract detections array
+        detections = sahi_result.get("data", [])
+        
+        # 2. Convert pixel boxes to geographic GeoJSON coordinates via rasterio
+        geojson_data = convert_pixels_to_geojson(temp_path, detections)
+        return geojson_data
+
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Geospatial processing failed: {str(exc)}")
+    finally:
+        # Cleanup temporary file
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
 
 
 if __name__ == "__main__":

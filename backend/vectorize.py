@@ -4,6 +4,8 @@ import cv2
 import numpy as np
 from shapely.geometry import Polygon, mapping
 import json
+import rasterio
+from rasterio.transform import xy
 
 
 def mask_to_polygon(mask_array: np.ndarray) -> Polygon | None:
@@ -48,6 +50,45 @@ def mask_to_polygon(mask_array: np.ndarray) -> Polygon | None:
         polygon = polygon.buffer(0)
 
     return polygon
+
+
+def convert_pixels_to_geojson(image_path: str, detections: list) -> dict:
+    """
+    Converts pixel-based bounding boxes into georeferenced GeoJSON polygons 
+    using the affine transform of a georeferenced raster (.tif).
+    """
+    features = []
+    with rasterio.open(image_path) as src:
+        transform = src.transform
+        crs_code = src.crs.to_string() if src.crs else "EPSG:4326"
+
+        for det in detections:
+            xmin, ymin, xmax, ymax = det["coordinates"]
+            pixel_coords = [
+                (xmin, ymin), (xmax, ymin), 
+                (xmax, ymax), (xmin, ymax), (xmin, ymin)
+            ]
+            geo_coords = []
+            for px, py in pixel_coords:
+                x_geo, y_geo = xy(transform, py, px)
+                geo_coords.append([x_geo, y_geo])
+
+            poly = Polygon(geo_coords)
+            if not poly.is_valid:
+                poly = poly.buffer(0)
+
+            feature = {
+                "type": "Feature",
+                "geometry": mapping(poly),
+                "properties": {
+                    "category": det.get("category_name", "roof"),
+                    "confidence": det.get("confidence", 0.0),
+                    "crs": crs_code
+                }
+            }
+            features.append(feature)
+
+    return {"type": "FeatureCollection", "features": features}
 
 
 if __name__ == "__main__":

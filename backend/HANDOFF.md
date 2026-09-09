@@ -5,6 +5,7 @@ This FastAPI backend has been upgraded with **Slicing Aided Hyper Inference (`sa
 
 - **Standard Endpoint:** `POST /predict` — Standard single-pass YOLOv8 prediction (best for small images).
 - **High-Res Tiling Endpoint:** `POST /predict-stitched` — SAHI sliced inference with **640x640 slice windows** and **15% overlap**, stitching detections across tile boundaries back into global image coordinates.
+- **Geospatial Endpoint:** `POST /predict-geospatial` — Accepts a georeferenced GeoTIFF (`.tif`), runs SAHI tiled inference, and converts pixel bounding boxes into true GPS/GeoJSON polygons using `rasterio` and affine transformation matrices.
 
 ---
 
