@@ -42,7 +42,9 @@ next-env.d.ts
 
 # Python / Backend
 backend/venv/
+venv/
 backend/__pycache__/
+__pycache__/
 *.pyc
 
 # Large model weights (Uncomment if you use Git LFS)
