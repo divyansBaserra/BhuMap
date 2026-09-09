@@ -1,19 +1,6 @@
-# BhuMap
-
-BhuMap is an AI-powered automated urban parcel mapping and GIS cadastral analysis platform. It combines a Next.js frontend for visualization and parcel management with a high-performance FastAPI AI backend for aerial drone imagery building detection and SAHI high-resolution tiling.
-
----
-
-## Architecture Overview
-
-- **Frontend (`app/`, `components/`, `public/`)**: Next.js 16 with React 19, Tailwind CSS, TypeScript, GSAP animations, and interactive mapping interface.
-- **AI Backend (`backend/`)**: FastAPI server powered by YOLOv8 and SAHI (Slicing Aided Hyper Inference) for deep-learning building/roof detection on high-resolution aerial drone imagery.
-
----
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
-
-### 1. Frontend Setup (Next.js)
 
 First, run the development server:
 
@@ -29,59 +16,21 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-#### Learn More (Frontend)
+## Learn More
+
+To learn more about Next.js, take a look at the following resources:
+
 - [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
 - [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
----
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-### 2. Backend Setup (FastAPI & AI Engine)
+## Deploy on Vercel
 
-Navigate to the backend directory:
-
-```bash
-cd backend
-```
-
-Activate the Python virtual environment:
-
-```powershell
-# Windows PowerShell
-.\venv\Scripts\Activate.ps1
-```
-
-Install backend dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-Start the FastAPI backend server:
-
-```bash
-python api_server.py
-# or
-uvicorn api_server:app --reload --host 0.0.0.0 --port 8000
-```
-
-The API will be accessible at [http://127.0.0.1:8000](http://127.0.0.1:8000), and interactive Swagger docs are available at [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs).
-
-#### Backend API Endpoints
-- `GET /`: Health check endpoint.
-- `POST /predict`: Standard YOLOv8 aerial roof detection.
-- `POST /predict-stitched`: High-resolution drone imagery sliced inference via SAHI (640x640 window with 15% overlap, memory-optimized for 4GB GPUs like NVIDIA RTX 2050).
-
-For full details on the backend setup, see [`backend/HANDOFF.md`](backend/HANDOFF.md).
-
----
-
-## Deployment
-
-### Frontend Deployment on Vercel
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
