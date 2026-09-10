@@ -28,7 +28,7 @@ if not MODEL_PATH:
 
 # Hardware configuration: NVIDIA RTX 2050 (4GB VRAM) memory-aware setup
 DEVICE = "cuda:0" if torch.cuda.is_available() else "cpu"
-CONFIDENCE_THRESHOLD = 0.25
+CONFIDENCE_THRESHOLD = 0.65
 SLICE_HEIGHT = 640
 SLICE_WIDTH = 640
 OVERLAP_HEIGHT_RATIO = 0.15
@@ -66,6 +66,7 @@ def predict_stitched(
     Returns:
         Clean JSON dictionary with status, count, and global bounding boxes.
     """
+    conf = max(float(conf), 0.65)
     if conf != sahi_model.confidence_threshold:
         sahi_model.confidence_threshold = conf
 
