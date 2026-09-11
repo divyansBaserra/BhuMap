@@ -42,10 +42,6 @@ button {
   background: #e8eeeb;
 }
 
-/* -------------------------------------------------
-   HUGE TITLE
-------------------------------------------------- */
-
 .hero-word {
   position: absolute;
   z-index: 2;
@@ -65,10 +61,6 @@ button {
   user-select: none;
   pointer-events: none;
 }
-
-/* -------------------------------------------------
-   TOPOGRAPHIC LINES
-------------------------------------------------- */
 
 .hero-contours {
   position: absolute;
@@ -143,10 +135,6 @@ button {
   top: 53%;
   transform: rotate(-12deg) scale(1.2);
 }
-
-/* -------------------------------------------------
-   SIDE INFORMATION
-------------------------------------------------- */
 
 .hero-meta {
   position: absolute;
@@ -349,10 +337,6 @@ button {
   z-index: 10;
 }
 
-/* -------------------------------------------------
-   PHONE STATUS BAR
-------------------------------------------------- */
-
 .status-bar {
   position: absolute;
   z-index: 15;
@@ -372,10 +356,6 @@ button {
 .dark-status {
   color: #252b28;
 }
-
-/* -------------------------------------------------
-   MAP PHONE
-------------------------------------------------- */
 
 .map-screen {
   position: absolute;
@@ -559,10 +539,6 @@ button {
   font-size: 15px;
 }
 
-/* -------------------------------------------------
-   REQUEST PHONE
-------------------------------------------------- */
-
 .light-screen {
   background: #e9eee9;
   color: #343b37;
@@ -703,10 +679,6 @@ button {
   color: #313733;
 }
 
-/* -------------------------------------------------
-   RESPONSIVE
-------------------------------------------------- */
-
 @media (max-width: 900px) {
   .hero-word {
     font-size: 22vw;
@@ -763,9 +735,7 @@ button {
     height: 60%;
   }
 }
-/* =================================================
-   BHUMAP INTRO / SCREEN 2
-================================================= */
+
 
 .bhumap-intro {
   position: relative;
@@ -781,11 +751,6 @@ button {
   background: #e8eeeb;
   color: #1f2523;
 }
-
-
-/* -----------------------------------------------
-   CONTOURS
------------------------------------------------ */
 
 .intro-contours {
   position: absolute;
@@ -854,10 +819,6 @@ button {
 }
 
 
-/* -----------------------------------------------
-   LEFT CONTENT
------------------------------------------------ */
-
 .intro-left {
   position: relative;
   z-index: 5;
@@ -907,9 +868,6 @@ button {
 }
 
 
-/* -----------------------------------------------
-   FEATURE LIST
------------------------------------------------ */
 
 .intro-features {
   margin-top: 55px;
@@ -940,10 +898,6 @@ button {
 }
 
 
-/* -----------------------------------------------
-   PHONE AREA
------------------------------------------------ */
-
 .intro-phones {
   position: relative;
   z-index: 4;
@@ -955,10 +909,6 @@ button {
   justify-content: center;
 }
 
-
-/* -----------------------------------------------
-   PHONE
------------------------------------------------ */
 
 .intro-phone {
   position: absolute;
@@ -980,9 +930,6 @@ button {
     inset 0 0 0 1px rgba(255,255,255,.18);
 }
 
-
-/* realistic metallic edge */
-
 .intro-phone::after {
   content: "";
 
@@ -1000,9 +947,6 @@ button {
 }
 
 
-/* -----------------------------------------------
-   NOTCH
------------------------------------------------ */
 
 .mock-notch {
   position: absolute;
@@ -1023,9 +967,6 @@ button {
 }
 
 
-/* -----------------------------------------------
-   STATUS
------------------------------------------------ */
 
 .mock-status {
   position: absolute;
@@ -1049,10 +990,6 @@ button {
   color: #202623;
 }
 
-
-/* -----------------------------------------------
-   MAP PHONE
------------------------------------------------ */
 
 .intro-phone-map {
   left: 10%;
@@ -1079,9 +1016,6 @@ button {
 
   overflow: hidden;
 }
-
-
-/* land parcels */
 
 .land {
   position: absolute;
@@ -1131,9 +1065,6 @@ button {
   transform: rotate(-10deg);
 }
 
-
-/* roads */
-
 .map-road {
   position: absolute;
 
@@ -1166,8 +1097,6 @@ button {
 }
 
 
-/* search */
-
 .gis-search {
   position: absolute;
 
@@ -1194,8 +1123,6 @@ button {
   font-size: 8px;
 }
 
-
-/* marker */
 
 .map-marker {
   position: absolute;
@@ -1230,8 +1157,6 @@ button {
 }
 
 
-/* controls */
-
 .gis-controls {
   position: absolute;
 
@@ -1260,9 +1185,6 @@ button {
 }
 
 
-/* -----------------------------------------------
-   PHONE BOTTOM
------------------------------------------------ */
 
 .mock-bottom {
   position: absolute;
@@ -1286,10 +1208,6 @@ button {
   font-size: 7px;
 }
 
-
-/* -----------------------------------------------
-   RECORD PHONE
------------------------------------------------ */
 
 .intro-phone-record {
   right: 5%;
@@ -1323,8 +1241,6 @@ button {
   font-weight: 400;
 }
 
-
-/* parcel preview */
 
 .parcel-preview {
   position: relative;
@@ -1367,8 +1283,6 @@ button {
   );
 }
 
-
-/* parcel details */
 
 .parcel-id {
   margin-top: 20px;
@@ -1427,10 +1341,6 @@ button {
 }
 
 
-/* -----------------------------------------------
-   RIGHT CONTENT
------------------------------------------------ */
-
 .intro-right {
   position: relative;
   z-index: 5;
@@ -1479,10 +1389,6 @@ button {
 }
 
 
-/* -----------------------------------------------
-   FLOW
------------------------------------------------ */
-
 .flow {
   display: grid;
 
@@ -1516,11 +1422,6 @@ button {
 
   font-weight: 600;
 }
-
-
-/* -----------------------------------------------
-   RESPONSIVE
------------------------------------------------ */
 
 @media (max-width: 1100px) {
 
