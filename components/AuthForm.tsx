@@ -4,7 +4,12 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { loginUser, registerUser } from "@/action/auth";
 
-export default function AuthForm({ onSuccess }: { onSuccess: () => void }) {
+interface AuthFormProps {
+  onSuccess: () => void;
+  onClose?: () => void;
+}
+
+export default function AuthForm({ onSuccess, onClose }: AuthFormProps) {
   const [isLogin, setIsLogin] = useState(true);
   const [serverError, setServerError] = useState("");
 
@@ -25,12 +30,9 @@ export default function AuthForm({ onSuccess }: { onSuccess: () => void }) {
       if (res?.error) {
         setServerError(res.error);
       } else if (res?.success && res?.user) {
-        // Save user to memory
         localStorage.setItem("bhumap_user", JSON.stringify(res.user));
-        // Trigger modal closure
         onSuccess();
-        // FORCE redirect back to root to apply global auth state instantly
-        window.location.href = "/";
+        window.location.href = "/workspace";
       }
     } catch (err) {
       setServerError("An unexpected error occurred. Please try again.");
@@ -38,7 +40,18 @@ export default function AuthForm({ onSuccess }: { onSuccess: () => void }) {
   };
 
   return (
-    <div className="bg-[#111814] text-white p-6 md:p-8 rounded-[2rem] shadow-2xl w-full max-w-md border border-white/10 max-h-[90vh] overflow-y-auto custom-scrollbar relative z-[60]">
+    <div className="bg-[#111814] text-white p-6 md:p-8 rounded-[2rem] shadow-2xl w-full max-w-md border border-white/10 max-h-[90vh] overflow-y-auto custom-scrollbar relative">
+      {onClose && (
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute top-5 right-5 text-white/60 hover:text-white font-bold text-lg transition-colors cursor-pointer z-10"
+          aria-label="Close modal"
+        >
+          ✕
+        </button>
+      )}
+
       <div className="flex bg-[#1a261f] p-1.5 rounded-2xl mb-6 border border-white/5">
         <button 
           type="button" 

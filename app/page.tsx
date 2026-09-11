@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -21,6 +22,7 @@ export default function BhuMapLanding() {
   const [showAuth, setShowAuth] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<{ name: string; email: string; role: string } | null>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
     const savedUser = localStorage.getItem("bhumap_user");
@@ -29,6 +31,34 @@ export default function BhuMapLanding() {
       setIsLoggedIn(true);
     }
   }, []);
+
+  useEffect(() => {
+    const scrollToSection = (path: string) => {
+      let targetId = "";
+      if (path === "/platform") targetId = "about";
+      else if (path === "/feature") targetId = "features";
+      else if (path === "/platform/how-it-work") targetId = "process";
+      else if (path === "/faq") targetId = "faq";
+
+      if (targetId) {
+        setTimeout(() => {
+          const el = document.getElementById(targetId);
+          if (el) el.scrollIntoView({ behavior: "smooth" });
+        }, 100);
+      } else if (path === "/") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    };
+
+    scrollToSection(pathname);
+
+    const handlePopState = () => {
+      scrollToSection(window.location.pathname);
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, [pathname]);
 
   const handleWorkspaceAccess = () => {
     if (isLoggedIn) {
@@ -84,8 +114,7 @@ export default function BhuMapLanding() {
       {showAuth && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
           <div className="relative w-full max-w-md">
-            <button onClick={() => setShowAuth(false)} className="absolute top-5 right-5 z-20 text-white/60 hover:text-white font-bold text-lg transition-colors cursor-pointer" aria-label="Close modal">✕</button>
-            <AuthForm onSuccess={handleAuthSuccess} />
+            <AuthForm onSuccess={handleAuthSuccess} onClose={() => setShowAuth(false)} />
           </div>
         </div>
       )}
@@ -93,10 +122,10 @@ export default function BhuMapLanding() {
       <Navbar isLoggedIn={isLoggedIn} onWorkspaceAccess={handleWorkspaceAccess} onLogout={handleLogout} onOpenAuth={() => setShowAuth(true)} />
       
       <Hero onWorkspaceAccess={handleWorkspaceAccess} />
-      <About />
-      <Features />
-      <Process />
-      <Faq />
+      <div id="about"><About /></div>
+      <div id="features"><Features /></div>
+      <div id="process"><Process /></div>
+      <div id="faq"><Faq /></div>
       <Footer />
     </main>
   );
