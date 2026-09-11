@@ -2,17 +2,13 @@
 
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn } from "next-auth/react";
-import { loginSchema, registerSchema, LoginFormData, RegisterFormData } from "@/lib/validations/auth";
+import { loginUser, registerUser } from "@/action/auth";
 
 export default function AuthForm({ onSuccess }: { onSuccess: () => void }) {
   const [isLogin, setIsLogin] = useState(true);
   const [serverError, setServerError] = useState("");
 
-  const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm<any>({
-    resolver: zodResolver(isLogin ? loginSchema : registerSchema),
-  });
+  const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm<any>();
 
   const switchMode = (loginState: boolean) => {
     setIsLogin(loginState);
@@ -23,44 +19,26 @@ export default function AuthForm({ onSuccess }: { onSuccess: () => void }) {
   const onSubmit = async (data: any) => {
     setServerError("");
     
-    if (isLogin) {
-      const loginData = data as LoginFormData;
-      const result = await signIn("credentials", {
-        redirect: false,
-        email: loginData.email,
-        password: loginData.password,
-      });
+    try {
+      const res = isLogin ? await loginUser(data) : await registerUser(data);
       
-      if (result?.error) {
-        setServerError("Invalid credentials. Please try again.");
-      } else {
+      if (res?.error) {
+        setServerError(res.error);
+      } else if (res?.success && res?.user) {
+        // Save user to memory
+        localStorage.setItem("bhumap_user", JSON.stringify(res.user));
+        // Trigger modal closure
         onSuccess();
+        // FORCE redirect back to root to apply global auth state instantly
+        window.location.href = "/";
       }
-    } else {
-      const registerData = data as RegisterFormData;
-      try {
-        const res = await fetch("/api/auth/register", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(registerData),
-        });
-        
-        if (!res.ok) {
-          const errorData = await res.json();
-          setServerError(errorData.message || "Registration failed. Surveyor ID or Email may exist.");
-        } else {
-          await signIn("credentials", { redirect: false, email: registerData.email, password: registerData.password });
-          onSuccess();
-        }
-      } catch (err) {
-        setServerError("A network error occurred. Please try again.");
-      }
+    } catch (err) {
+      setServerError("An unexpected error occurred. Please try again.");
     }
   };
 
   return (
-    <div className="bg-[#111814] text-white p-6 md:p-8 rounded-[2rem] shadow-2xl w-full max-w-md border border-white/10 max-h-[90vh] overflow-y-auto custom-scrollbar">
-      {/* Sign In / Register Tab Switcher */}
+    <div className="bg-[#111814] text-white p-6 md:p-8 rounded-[2rem] shadow-2xl w-full max-w-md border border-white/10 max-h-[90vh] overflow-y-auto custom-scrollbar relative z-[60]">
       <div className="flex bg-[#1a261f] p-1.5 rounded-2xl mb-6 border border-white/5">
         <button 
           type="button" 
@@ -83,7 +61,7 @@ export default function AuthForm({ onSuccess }: { onSuccess: () => void }) {
           {isLogin ? "Surveyor Portal Login" : "Register Cadastral Profile"}
         </h3>
         <p className="text-[13px] text-white/60 mt-1 font-medium leading-relaxed">
-          {isLogin ? "Access your GIS parcel workspace." : "Request access to the BhuMap extraction platform."}
+          {isLogin ? "Access your GIS parcel workspace." : "Request access to the BhuMap platform."}
         </p>
       </div>
       
@@ -98,14 +76,14 @@ export default function AuthForm({ onSuccess }: { onSuccess: () => void }) {
           <>
             <div>
               <label className="text-[11px] font-bold text-white/80 uppercase tracking-wider">Full Name</label>
-              <input {...register("fullName")} className="w-full mt-1.5 bg-[#1a261f] text-white px-4 py-3 rounded-xl border border-white/10 focus:border-[#5b8c69] focus:outline-none transition-all text-xs font-medium" placeholder="e.g. Anil Kumar" />
+              <input {...register("fullName", { required: "Name is required" })} className="w-full mt-1.5 bg-[#1a261f] text-white px-4 py-3 rounded-xl border border-white/10 focus:border-[#5b8c69] focus:outline-none transition-all text-xs font-medium" placeholder="e.g. Anil Kumar" />
               {errors.fullName && <p className="text-red-400 text-[11px] mt-1 font-medium">{errors.fullName.message as string}</p>}
             </div>
             
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="flex-1">
                 <label className="text-[11px] font-bold text-white/80 uppercase tracking-wider">Surveyor ID</label>
-                <input {...register("surveyorId")} className="w-full mt-1.5 bg-[#1a261f] text-white px-4 py-3 rounded-xl border border-white/10 focus:border-[#5b8c69] focus:outline-none transition-all text-xs font-medium" placeholder="SUR-2026" />
+                <input {...register("surveyorId", { required: "ID is required" })} className="w-full mt-1.5 bg-[#1a261f] text-white px-4 py-3 rounded-xl border border-white/10 focus:border-[#5b8c69] focus:outline-none transition-all text-xs font-medium" placeholder="SUR-2026" />
                 {errors.surveyorId && <p className="text-red-400 text-[11px] mt-1 font-medium">{errors.surveyorId.message as string}</p>}
               </div>
               <div className="flex-1">
@@ -118,7 +96,6 @@ export default function AuthForm({ onSuccess }: { onSuccess: () => void }) {
                   <option value="Gujarat">Gujarat</option>
                   <option value="National">National (DILRMP)</option>
                 </select>
-                {errors.targetState && <p className="text-red-400 text-[11px] mt-1 font-medium">{errors.targetState.message as string}</p>}
               </div>
             </div>
           </>
@@ -126,17 +103,18 @@ export default function AuthForm({ onSuccess }: { onSuccess: () => void }) {
 
         <div>
           <label className="text-[11px] font-bold text-white/80 uppercase tracking-wider">Official Email</label>
-          <input {...register("email")} className="w-full mt-1.5 bg-[#1a261f] text-white px-4 py-3 rounded-xl border border-white/10 focus:border-[#5b8c69] focus:outline-none transition-all text-xs font-medium" placeholder="surveyor@state.gov.in" />
+          <input type="email" {...register("email", { required: "Email is required" })} className="w-full mt-1.5 bg-[#1a261f] text-white px-4 py-3 rounded-xl border border-white/10 focus:border-[#5b8c69] focus:outline-none transition-all text-xs font-medium" placeholder="surveyor@state.gov.in" />
           {errors.email && <p className="text-red-400 text-[11px] mt-1 font-medium">{errors.email.message as string}</p>}
         </div>
 
         <div>
           <label className="text-[11px] font-bold text-white/80 uppercase tracking-wider">Password</label>
-          <input type="password" {...register("password")} className="w-full mt-1.5 bg-[#1a261f] text-white px-4 py-3 rounded-xl border border-white/10 focus:border-[#5b8c69] focus:outline-none transition-all text-xs font-medium" placeholder="••••••••" />
+          <input type="password" {...register("password", { required: "Password is required" })} className="w-full mt-1.5 bg-[#1a261f] text-white px-4 py-3 rounded-xl border border-white/10 focus:border-[#5b8c69] focus:outline-none transition-all text-xs font-medium" placeholder="••••••••" />
           {errors.password && <p className="text-red-400 text-[11px] mt-1 font-medium">{errors.password.message as string}</p>}
         </div>
 
         <button 
+          type="submit"
           disabled={isSubmitting}
           className="w-full bg-[#5b8c69] text-white font-bold py-3.5 rounded-xl hover:bg-[#4a7258] transition-all mt-3 disabled:opacity-70 shadow-lg cursor-pointer text-xs flex items-center justify-center gap-2"
         >
